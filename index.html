@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Ethereal | Perfumería de Alta Costura</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            100: '#fbf4e2',
+                            200: '#f6e4ba',
+                            300: '#eecf87',
+                            400: '#e4b652',
+                            500: '#d49b28',
+                            600: '#b87c1e',
+                            700: '#935c1c',
+                        },
+                        obsidian: '#0b0b0c',
+                        pearl: '#fcfbf8',
+                        warmbeige: '#f5f0eb'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0b0c;
+            color: #fcfbf8;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #f6e4ba 0%, #d49b28 50%, #fbf4e2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-border-gradient {
+            border-image: linear-gradient(to right, #d49b28, #fbf4e2, #b87c1e) 1;
+        }
+        .glass-dark {
+            background: rgba(18, 18, 20, 0.75);
+            backdrop-filter: blur(12px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #121214;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d49b28;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col selection:bg-gold-500 selection:text-obsidian">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-gradient-to-r from-obsidian via-gold-700 to-obsidian text-gold-100 text-[11px] uppercase tracking-[0.25em] py-2 text-center font-medium border-b border-gold-500/20">
+        ✦ Envío de cortesía a todo el mundo en compras superiores a $200 USD ✦
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="sticky top-0 z-40 glass-dark border-b border-white/10 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Mobile Menu Trigger -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-white hover:text-gold-400 p-2 focus:outline-none">
+                    <i class="fa-solid fa-bars-staggered text-xl"></i>
+                </button>
+
+                <!-- Brand Logo -->
+                <a href="#" class="flex flex-col items-center group">
+                    <span class="font-serif text-2xl sm:text-3xl font-bold tracking-[0.2em] gold-gradient-text">AURA ETHEREAL</span>
+                    <span class="text-[9px] uppercase tracking-[0.4em] text-slate-400 group-hover:text-gold-300 transition-colors">Haute Parfumerie</span>
+                </a>
+
+                <!-- Desktop Links -->
+                <nav class="hidden lg:flex items-center space-x-8 text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+                    <a href="#hero" class="hover:text-gold-400 transition-colors">Inicio</a>
+                    <a href="#catalogo" class="hover:text-gold-400 transition-colors">Catálogo</a>
+                    <a href="#colecciones" class="hover:text-gold-400 transition-colors">Colecciones</a>
+                    <a href="#piramide" class="hover:text-gold-400 transition-colors">Notas Olfativas</a>
+                    <a href="#contacto" class="hover:text-gold-400 transition-colors">Contacto</a>
+                </nav>
+
+                <!-- Search & Cart Controls -->
+                <div class="flex items-center space-x-5">
+                    <!-- Search Input Wrapper -->
+                    <div class="relative hidden sm:block w-48 lg:w-64">
+                        <input type="text" id="search-input" oninput="filterProducts()" placeholder="Buscar fragancia..." 
+                            class="w-full bg-white/5 border border-white/10 rounded-full py-1.5 pl-9 pr-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-gold-500 transition-colors">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+                    </div>
+
+                    <!-- Cart Trigger -->
+                    <button onclick="openCart()" class="relative p-2 text-white hover:text-gold-400 transition-colors focus:outline-none">
+                        <i class="fa-solid fa-bag-shopping text-xl"></i>
+                        <span id="cart-badge" class="absolute top-0 right-0 w-5 h-5 bg-gold-500 text-obsidian font-extrabold text-[10px] rounded-full flex items-center justify-center shadow-lg transform scale-0 transition-transform">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Search Dropdown -->
+        <div class="sm:hidden px-4 pb-3">
+            <div class="relative w-full">
+                <input type="text" id="search-input-mobile" oninput="syncMobileSearch(this.value)" placeholder="Buscar por nota o nombre..." 
+                    class="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-9 pr-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-gold-500">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-400"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="mobile-menu" class="fixed inset-0 bg-obsidian/95 z-50 transform -translate-x-full transition-transform duration-300 lg:hidden flex flex-col justify-between p-8">
+        <div>
+            <div class="flex justify-between items-center mb-10">
+                <span class="font-serif text-xl font-bold gold-gradient-text tracking-widest">AURA ETHEREAL</span>
+                <button onclick="toggleMobileMenu()" class="text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <nav class="flex flex-col space-y-6 font-serif text-xl text-slate-200">
+                <a href="#hero" onclick="toggleMobileMenu()" class="hover:text-gold-400">Inicio</a>
+                <a href="#catalogo" onclick="toggleMobileMenu()" class="hover:text-gold-400">Catálogo de Elixires</a>
+                <a href="#colecciones" onclick="toggleMobileMenu()" class="hover:text-gold-400">Colecciones Privadas</a>
+                <a href="#piramide" onclick="toggleMobileMenu()" class="hover:text-gold-400">Arte Olfativo</a>
+                <a href="#contacto" onclick="toggleMobileMenu()" class="hover:text-gold-400">Atención Exclusiva</a>
+            </nav>
+        </div>
+        <div class="border-t border-white/10 pt-6 text-xs text-slate-400 text-center">
+            <p>© 2027 Aura Ethereal Parfums.</p>
+        </div>
+    </div>
+
+    <!-- Main Body Content -->
+    <main class="flex-grow">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="relative min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-white/10">
+            <!-- Background Image Blur Overlay -->
+            <div class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-25 filter scale-105"></div>
+            <div class="absolute inset-0 z-0 bg-gradient-to-t from-obsidian via-obsidian/80 to-transparent"></div>
+
+            <div class="relative z-10 max-w-4xl mx-auto px-4 text-center space-y-8 py-20">
+                <div class="inline-flex items-center space-x-3 px-4 py-1.5 rounded-full border border-gold-500/30 bg-gold-500/10 backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse"></span>
+                    <span class="text-xs uppercase tracking-[0.3em] text-gold-200 font-medium">Edición Limitada 2027</span>
+                </div>
+
+                <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-light text-white leading-tight">
+                    La Escultura Invisible del <span class="italic font-normal gold-gradient-text">Alma</span>
+                </h1>
+
+                <p class="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
+                    Fragancias de nicho elaboradas artesanalmente en Grasse con los extractos más escasos de la tierra. Un tributo a la elegancia eterna.
+                </p>
+
+                <div class="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="#catalogo" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-gold-600 to-gold-400 hover:from-gold-500 hover:to-gold-300 text-obsidian font-bold text-xs uppercase tracking-[0.2em] rounded-full transition-all duration-300 shadow-[0_0_25px_rgba(212,155,40,0.3)] transform hover:-translate-y-0.5">
+                        Explorar Colección
+                    </a>
+                    <a href="#piramide" class="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/20 text-white font-medium text-xs uppercase tracking-[0.2em] rounded-full backdrop-blur-md transition-all">
+                        Descubrir Notas
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Catalog Section -->
+        <section id="catalogo" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Title -->
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-gold-400 text-xs font-semibold uppercase tracking-[0.3em] block mb-3">Catálogo Exclusivo</span>
+                <h2 class="font-serif text-3xl sm:text-5xl font-light text-white">Nuestras Creaciones</h2>
+                <div class="w-16 h-[1px] bg-gold-500 mx-auto mt-6"></div>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 border-b border-white/10 pb-6">
+                
+                <!-- Family Olfative Filters -->
+                <div class="flex flex-wrap justify-center gap-2" id="family-filters">
+                    <button onclick="setFilter('family', 'all')" class="filter-btn active px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider bg-gold-500 text-obsidian transition-all">Todas</button>
+                    <button onclick="setFilter('family', 'Amaderado')" class="filter-btn px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-all">Amaderado</button>
+                    <button onclick="setFilter('family', 'Floral')" class="filter-btn px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-all">Floral</button>
+                    <button onclick="setFilter('family', 'Cítrico')" class="filter-btn px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-all">Cítrico</button>
+                    <button onclick="setFilter('family', 'Oriental')" class="filter-btn px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-all">Oriental</button>
+                </div>
+
+                <!-- Gender Filters -->
+                <div class="flex items-center bg-white/5 p-1 rounded-full border border-white/10 text-xs">
+                    <button onclick="setFilter('gender', 'all')" class="gender-btn px-3 py-1.5 rounded-full text-gold-400 font-semibold transition-all">Todos</button>
+                    <button onclick="setFilter('gender', 'Unisex')" class="gender-btn px-3 py-1.5 rounded-full text-slate-400 hover:text-white transition-all">Unisex</button>
+                    <button onclick="setFilter('gender', 'Ella')" class="gender-btn px-3 py-1.5 rounded-full text-slate-400 hover:text-white transition-all">Ella</button>
+                    <button onclick="setFilter('gender', 'Él')" class="gender-btn px-3 py-1.5 rounded-full text-slate-400 hover:text-white transition-all">Él</button>
+                </div>
+
+            </div>
+
+            <!-- Products Grid -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Dynamic Product Cards Injected Here -->
+            </div>
+
+            <!-- Empty Search State -->
+            <div id="no-results" class="hidden text-center py-16 space-y-4">
+                <i class="fa-solid fa-wind text-4xl text-slate-600"></i>
+                <h3 class="font-serif text-xl text-slate-400">No encontramos ningún perfume con esos criterios</h3>
+                <p class="text-xs text-slate-600">Intenta cambiar los filtros o el término de búsqueda.</p>
+            </div>
+
+        </section>
+
+        <!-- Olfactory Pyramid Explanation -->
+        <section id="piramide" class="py-20 bg-gradient-to-b from-obsidian via-slate-950 to-obsidian border-t border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <div class="lg:col-span-5 space-y-6">
+                        <span class="text-gold-400 text-xs font-semibold uppercase tracking-[0.3em]">Arte & Estructura</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-light text-white leading-tight">La Arquitectura de un Perfume</h2>
+                        <p class="text-sm text-slate-400 font-light leading-relaxed">
+                            Cada creación de Aura Ethereal evoluciona en la piel como una sinfonía en tres actos. Conoce cómo se despliegan nuestras esencias a lo largo del tiempo.
+                        </p>
+                        
+                        <div class="space-y-4 pt-2">
+                            <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-gold-300 flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-gold-400 mr-2"></span> Notas de Salida (0 - 15 min)
+                                </h4>
+                                <p class="text-xs text-slate-400 mt-1">La primera impresión efímera. Fresca y vibrante.</p>
+                            </div>
+                            <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-gold-300 flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-gold-400 mr-2"></span> Notas de Corazón (2 - 4 horas)
+                                </h4>
+                                <p class="text-xs text-slate-400 mt-1">El alma del perfume. Define la verdadera personalidad de la fragancia.</p>
+                            </div>
+                            <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-gold-300 flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-gold-400 mr-2"></span> Notas de Fondo (6+ horas)
+                                </h4>
+                                <p class="text-xs text-slate-400 mt-1">La memoria perdurable en la piel. Rica, cálida y envolvente.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 flex justify-center">
+                        <div class="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden border border-gold-500/20 p-8 flex flex-col justify-center items-center text-center bg-gradient-to-tr from-obsidian to-slate-900 shadow-2xl">
+                            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#d49b28_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                            
+                            <!-- Visual Pyramid Lines -->
+                            <div class="relative z-10 space-y-8 w-full">
+                                <div class="border-b border-gold-500/40 pb-4">
+                                    <span class="text-[10px] text-gold-400 uppercase tracking-widest block">Cúspide</span>
+                                    <h3 class="font-serif text-lg text-white font-medium">Salida: Bergamota & Cardamomo</h3>
+                                </div>
+                                <div class="border-b border-gold-500/40 pb-4">
+                                    <span class="text-[10px] text-gold-400 uppercase tracking-widest block">Núcleo</span>
+                                    <h3 class="font-serif text-xl text-gold-200 font-medium">Corazón: Rosa de Grasse & Iris Absoluto</h3>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-gold-400 uppercase tracking-widest block">Base Eterna</span>
+                                    <h3 class="font-serif text-2xl text-white font-semibold">Fondo: Oud Real, Ámbar & Vainilla de Madagascar</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter / Exclusive Club -->
+        <section id="contacto" class="py-20 max-w-5xl mx-auto px-4 text-center">
+            <div class="bg-gradient-to-r from-white/5 via-gold-500/10 to-white/5 border border-gold-500/30 p-10 sm:p-16 rounded-3xl backdrop-blur-md space-y-6">
+                <span class="text-xs font-semibold uppercase tracking-[0.3em] text-gold-400">Círculo Privado</span>
+                <h2 class="font-serif text-3xl sm:text-4xl text-white font-light">Únete a la Lista de Honor</h2>
+                <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto font-light leading-relaxed">
+                    Recibe invitaciones a catas olfativas privadas, acceso anticipado a frascos numerados y muestras exclusivas.
+                </p>
+
+                <form onsubmit="handleSubscribe(event)" class="max-w-md mx-auto flex flex-col sm:flex-row gap-3 pt-4">
+                    <input type="email" required placeholder="Tu correo electrónico personal..." 
+                        class="w-full bg-obsidian border border-white/20 rounded-full px-5 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-gold-500">
+                    <button type="submit" class="whitespace-nowrap px-8 py-3 bg-gold-500 hover:bg-gold-400 text-obsidian font-bold text-xs uppercase tracking-widest rounded-full transition-all">
+                        Suscribirme
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-obsidian border-t border-white/10 py-12 text-slate-500 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div class="space-y-3">
+                <span class="font-serif text-lg text-white font-bold tracking-widest gold-gradient-text block">AURA ETHEREAL</span>
+                <p class="text-[11px] leading-relaxed">Alta perfumería concebida para trascender el tiempo y evocar memorias inolvidables.</p>
+            </div>
+            <div>
+                <h4 class="text-white uppercase tracking-widest text-[11px] font-semibold mb-4">Boutiques</h4>
+                <ul class="space-y-2 text-[11px]">
+                    <li>París: 12 Rue de la Paix</li>
+                    <li>Nueva York: 5th Avenue</li>
+                    <li>Madrid: Calle Serrano</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white uppercase tracking-widest text-[11px] font-semibold mb-4">Servicios</h4>
+                <ul class="space-y-2 text-[11px]">
+                    <li>Asesoría Olfativa Personalizada</li>
+                    <li>Personalización de Frascos</li>
+                    <li>Garantía de Autenticidad</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white uppercase tracking-widest text-[11px] font-semibold mb-4">Síguenos</h4>
+                <div class="flex space-x-4 text-slate-400 text-base">
+                    <a href="#" class="hover:text-gold-400"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-gold-400"><i class="fa-brands fa-pinterest"></i></a>
+                    <a href="#" class="hover:text-gold-400"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-white/5 pt-6 text-center text-[10px] tracking-widest uppercase">
+            © 2027 Aura Ethereal Parfumerie. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <!-- Slide-over Cart Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="closeCart()"></div>
+
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-obsidian border-l border-white/10 text-white flex flex-col justify-between shadow-2xl">
+                
+                <!-- Drawer Header -->
+                <div class="p-6 border-b border-white/10 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-bag-shopping text-gold-400"></i>
+                        <h3 class="font-serif text-lg tracking-wider">Tu Carrito de Lujo</h3>
+                    </div>
+                    <button onclick="closeCart()" class="text-slate-400 hover:text-white p-2">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Drawer Cart Items Container -->
+                <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                    <!-- Dynamic Cart Items Rendered Here -->
+                </div>
+
+                <!-- Drawer Footer & Total -->
+                <div class="p-6 border-t border-white/10 bg-slate-950 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs uppercase tracking-widest text-slate-400">Subtotal Estimado</span>
+                        <span id="cart-subtotal" class="font-serif text-xl font-bold gold-gradient-text">$0 USD</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500">Impuestos y gastos de envío calculados en el pago.</p>
+                    <button onclick="openCheckout()" class="w-full py-4 bg-gradient-to-r from-gold-600 to-gold-400 hover:from-gold-500 hover:to-gold-300 text-obsidian font-bold text-xs uppercase tracking-[0.2em] rounded-full transition-all shadow-lg">
+                        Proceder al Pago
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick View Modal for Perfume Details -->
+    <div id="product-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeProductModal()"></div>
+        
+        <div class="relative bg-slate-900 border border-gold-500/30 rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl z-10 text-white">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-black/50 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="modal-content" class="grid grid-cols-1 md:grid-cols-2">
+                <!-- Dynamic Content injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal Simulation -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeCheckout()"></div>
+
+        <div class="relative bg-slate-900 border border-gold-500/30 rounded-3xl max-w-md w-full p-8 shadow-2xl z-10 text-white text-center space-y-6">
+            <div class="w-16 h-16 bg-gold-500/20 text-gold-400 rounded-full flex items-center justify-center text-3xl mx-auto border border-gold-500/30">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            
+            <h3 class="font-serif text-2xl font-light">Solicitud Recibida</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Gracias por elegir <span class="gold-gradient-text font-bold">Aura Ethereal</span>. Un Concierge Olfativo se pondrá en contacto contigo para finalizar la entrega personalizada.
+            </p>
+
+            <div class="bg-white/5 p-4 rounded-2xl text-xs space-y-1 text-slate-400">
+                <p>Orden #AE-2027-8942</p>
+                <p class="text-gold-300 font-bold" id="checkout-total-display">$0 USD</p>
+            </div>
+
+            <button onclick="closeCheckout()" class="w-full py-3 bg-gold-500 hover:bg-gold-400 text-obsidian font-bold text-xs uppercase tracking-widest rounded-full transition-all">
+                Volver a la Galería
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Application State & Logic -->
+    <script>
+        // PERFUME DATABASE
+        const PERFUMES = [
+            {
+                id: 1,
+                name: "Oud Impérial",
+                family: "Amaderado",
+                gender: "Unisex",
+                price: 280,
+                image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80",
+                description: "Una majestuosa combinación de Oud real cosechado en la India, envuelto en notas místicas de humo de incienso y especias exóticas.",
+                topNotes: "Cardamomo, Humo de Incienso",
+                heartNotes: "Oud Camboyano, Papiro",
+                baseNotes: "Ámbar Gris, Cuero, Sándalo"
+            },
+            {
+                id: 2,
+                name: "Rosa de Éther",
+                family: "Floral",
+                gender: "Ella",
+                price: 240,
+                image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80",
+                description: "El perfume definitivo de la rosa Centifolia recolectada al amanecer en Grasse, realzada con toques aterciopelados de frambuesa silvestre.",
+                topNotes: "Bergamota de Calabria, Frambuesa",
+                heartNotes: "Rosa Centifolia, Peonía",
+                baseNotes: "Almizcle Blanco, Cedro del Atlas"
+            },
+            {
+                id: 3,
+                name: "Soleil d'Or",
+                family: "Cítrico",
+                gender: "Unisex",
+                price: 210,
+                image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80",
+                description: "La frescura dorada del Mediterráneo capturada en una botella. Cítricos efervescentes entrelazados con flor de azahar y brisa marina.",
+                topNotes: "Limón Siciliano, Mandarina Verde",
+                heartNotes: "Flor de Azahar, NEROLI",
+                baseNotes: "Vetiver de Haití, Ámbar Solar"
+            },
+            {
+                id: 4,
+                name: "Nuit Orientale",
+                family: "Oriental",
+                gender: "Él",
+                price: 295,
+                image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80",
+                description: "Una fragancia nocturna e intensa donde la dulzura de la vainilla Bourbon se mezcla con tabaco rubio refinado y resinas antiguas.",
+                topNotes: "Hojas de Tabaco, Especias Cálidas",
+                heartNotes: "Vainilla Bourbon, Cacao Puro",
+                baseNotes: "Tonka, Madera de Guayaco"
+            },
+            {
+                id: 5,
+                name: "Iris Sublime",
+                family: "Floral",
+                gender: "Unisex",
+                price: 260,
+                image: "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80",
+                description: "La elegancia en estado puro. Manteca de Iris de Florencia envejecida durante 3 años con matices polvorientos y sofisticados.",
+                topNotes: "Violeta Silvestre, Pimienta Rosa",
+                heartNotes: "Iris Pallida de Florencia",
+                baseNotes: "Almizcle de Seda, Benjuí"
+            },
+            {
+                id: 6,
+                name: "Santal Céleste",
+                family: "Amaderado",
+                gender: "Unisex",
+                price: 235,
+                image: "https://images.unsplash.com/photo-1595425970377-c9703cf48b6d?auto=format&fit=crop&w=800&q=80",
+                description: "Sándalo cremoso australiano infusionado con higo fresco y especias suaves que aportan una aura serena y envolvente.",
+                topNotes: "Higo de Provenza, Semillas de Cilantro",
+                heartNotes: "Sándalo cremoso, Iris",
+                baseNotes: "Madera de Cedro, Cuero Suave"
+            },
+            {
+                id: 7,
+                name: "Ambre Nocturne",
+                family: "Oriental",
+                gender: "Ella",
+                price: 270,
+                image: "https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=800&q=80",
+                description: "Un elíxir cálido y provocativo donde el ámbar dorado se fusiona con orquídeas negras y bálsamo de mirra.",
+                topNotes: "Orquídea Negra, Ciruela de Damasco",
+                heartNotes: "Ámbar Dorado, Bálsamo de Perú",
+                baseNotes: "Mirra, Pachulí Oscuro"
+            },
+            {
+                id: 8,
+                name: "Bergamote Céleste",
+                family: "Cítrico",
+                gender: "Él",
+                price: 220,
+                image: "https://images.unsplash.com/photo-1583445013765-46c20c4a6772?auto=format&fit=crop&w=800&q=80",
+                description: "Bergamota chispeante realzada con notas herbales de romero y la solidez amaderada del vetiver aromático.",
+                topNotes: "Bergamota de Calabria, Pomelo Rosa",
+                heartNotes: "Romero Silvestre, Salvia",
+                baseNotes: "Vetiver, Musgo de Roble"
+            }
+        ];
+
+        // APP STATE
+        let cart = [];
+        let currentFilters = {
+            family: 'all',
+            gender: 'all',
+            search: ''
+        };
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+        });
+
+        // RENDER PRODUCTS GRID
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            const noResults = document.getElementById('no-results');
+            grid.innerHTML = '';
+
+            const filtered = PERFUMES.filter(product => {
+                const matchesFamily = currentFilters.family === 'all' || product.family === currentFilters.family;
+                const matchesGender = currentFilters.gender === 'all' || product.gender === currentFilters.gender;
+                const matchesSearch = product.name.toLowerCase().includes(currentFilters.search.toLowerCase()) || 
+                                      product.family.toLowerCase().includes(currentFilters.search.toLowerCase()) ||
+                                      product.topNotes.toLowerCase().includes(currentFilters.search.toLowerCase());
+                return matchesFamily && matchesGender && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                filtered.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white/5 border border-white/10 rounded-3xl overflow-hidden hover:border-gold-500/50 transition-all duration-300 flex flex-col justify-between group shadow-lg";
+                    
+                    card.innerHTML = `
+                        <div class="relative overflow-hidden cursor-pointer" onclick="openProductModal(${product.id})">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-72 object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent opacity-80"></div>
+                            
+                            <!-- Badges -->
+                            <div class="absolute top-4 left-4 flex gap-2">
+                                <span class="bg-obsidian/80 backdrop-blur-md text-gold-300 border border-gold-500/30 text-[10px] uppercase font-bold px-3 py-1 rounded-full">${product.family}</span>
+                                <span class="bg-white/10 backdrop-blur-md text-white text-[10px] uppercase font-medium px-2.5 py-1 rounded-full">${product.gender}</span>
+                            </div>
+
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <h3 class="font-serif text-xl font-medium text-white group-hover:text-gold-300 transition-colors">${product.name}</h3>
+                                <p class="text-[11px] text-slate-400 mt-1 truncate"><i class="fa-solid fa-leaf text-gold-500 mr-1"></i>${product.topNotes}</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 border-t border-white/5 flex items-center justify-between bg-slate-950/40">
+                            <div>
+                                <span class="text-[10px] uppercase text-slate-500 block">Precio</span>
+                                <span class="font-serif text-lg font-bold gold-gradient-text">$${product.price} USD</span>
+                            </div>
+                            <button onclick="addToCart(${product.id})" class="px-4 py-2.5 bg-gold-500 hover:bg-gold-400 text-obsidian font-bold text-xs uppercase tracking-wider rounded-full transition-all shadow-md flex items-center space-x-1">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                                <span>Añadir</span>
+                            </button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // FILTER CONTROLS
+        function setFilter(type, value) {
+            currentFilters[type] = value;
+
+            // UI Button Active States
+            if (type === 'family') {
+                const btns = document.querySelectorAll('#family-filters button');
+                btns.forEach(btn => {
+                    if ((value === 'all' && btn.innerText === 'TODAS') || btn.innerText.toUpperCase() === value.toUpperCase()) {
+                        btn.className = "filter-btn active px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider bg-gold-500 text-obsidian transition-all";
+                    } else {
+                        btn.className = "filter-btn px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-all";
+                    }
+                });
+            }
+
+            if (type === 'gender') {
+                const btns = document.querySelectorAll('.gender-btn');
+                btns.forEach(btn => {
+                    const text = btn.innerText.trim();
+                    if ((value === 'all' && text === 'Todos') || text === value) {
+                        btn.className = "gender-btn px-3 py-1.5 rounded-full text-gold-400 font-semibold transition-all";
+                    } else {
+                        btn.className = "gender-btn px-3 py-1.5 rounded-full text-slate-400 hover:text-white transition-all";
+                    }
+                });
+            }
+
+            renderProducts();
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('search-input').value;
+            currentFilters.search = query;
+            renderProducts();
+        }
+
+        function syncMobileSearch(val) {
+            currentFilters.search = val;
+            renderProducts();
+        }
+
+        // CART LOGIC
+        function addToCart(productId) {
+            const perfume = PERFUMES.find(p => p.id === productId);
+            const existing = cart.find(item => item.id === productId);
+
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ ...perfume, quantity: 1 });
+            }
+
+            updateCartUI();
+            openCart();
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        function changeQuantity(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartUI();
+                }
+            }
+        }
+
+        function updateCartUI() {
+            const cartBadge = document.getElementById('cart-badge');
+            const container = document.getElementById('cart-items-container');
+            const subtotalEl = document.getElementById('cart-subtotal');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            // Badge
+            cartBadge.innerText = totalItems;
+            if (totalItems > 0) {
+                cartBadge.classList.remove('scale-0');
+            } else {
+                cartBadge.classList.add('scale-0');
+            }
+
+            // Render Items
+            container.innerHTML = '';
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-16 text-slate-500 space-y-3">
+                        <i class="fa-solid fa-bag-shopping text-3xl opacity-30"></i>
+                        <p class="text-xs">Tu bolsa de compras está vacía.</p>
+                    </div>
+                `;
+            } else {
+                cart.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = "flex items-center space-x-4 bg-white/5 p-3 rounded-2xl border border-white/5";
+                    el.innerHTML = `
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl">
+                        <div class="flex-grow">
+                            <h4 class="font-serif text-sm font-medium text-white">${item.name}</h4>
+                            <span class="text-xs text-gold-400 font-bold">$${item.price} USD</span>
+                            
+                            <div class="flex items-center space-x-2 mt-2">
+                                <button onclick="changeQuantity(${item.id}, -1)" class="w-5 h-5 rounded-full bg-white/10 text-white flex items-center justify-center text-xs hover:bg-gold-500 hover:text-obsidian">-</button>
+                                <span class="text-xs font-bold px-1">${item.quantity}</span>
+                                <button onclick="changeQuantity(${item.id}, 1)" class="w-5 h-5 rounded-full bg-white/10 text-white flex items-center justify-center text-xs hover:bg-gold-500 hover:text-obsidian">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-slate-500 hover:text-rose-400 p-2">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                    `;
+                    container.appendChild(el);
+                });
+            }
+
+            subtotalEl.innerText = `$${subtotal} USD`;
+        }
+
+        // CART DRAWER OPEN/CLOSE
+        function openCart() {
+            document.getElementById('cart-drawer').classList.remove('hidden');
+        }
+
+        function closeCart() {
+            document.getElementById('cart-drawer').classList.add('hidden');
+        }
+
+        // QUICK VIEW MODAL
+        function openProductModal(productId) {
+            const product = PERFUMES.find(p => p.id === productId);
+            const content = document.getElementById('modal-content');
+
+            content.innerHTML = `
+                <div class="relative h-64 md:h-full min-h-[300px]">
+                    <img src="${product.image}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                </div>
+                <div class="p-8 space-y-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="text-[10px] bg-gold-500/20 text-gold-300 px-3 py-1 rounded-full font-bold uppercase">${product.family}</span>
+                            <span class="text-[10px] bg-white/10 text-slate-300 px-3 py-1 rounded-full font-medium uppercase">${product.gender}</span>
+                        </div>
+                        <h2 class="font-serif text-3xl font-light text-white mb-2">${product.name}</h2>
+                        <p class="text-xs text-slate-300 leading-relaxed font-light mb-4">${product.description}</p>
+                        
+                        <!-- Olfactory Pyramid Details -->
+                        <div class="space-y-2 border-t border-white/10 pt-4 text-xs">
+                            <p class="text-slate-400"><strong class="text-gold-400 font-semibold">Salida:</strong> ${product.topNotes}</p>
+                            <p class="text-slate-400"><strong class="text-gold-400 font-semibold">Corazón:</strong> ${product.heartNotes}</p>
+                            <p class="text-slate-400"><strong class="text-gold-400 font-semibold">Fondo:</strong> ${product.baseNotes}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between border-t border-white/10 pt-4">
+                        <span class="font-serif text-2xl font-bold gold-gradient-text">$${product.price} USD</span>
+                        <button onclick="addToCart(${product.id}); closeProductModal();" class="px-6 py-3 bg-gold-500 hover:bg-gold-400 text-obsidian font-bold text-xs uppercase tracking-wider rounded-full shadow-lg">
+                            Añadir a la Bolsa
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        // CHECKOUT MODAL
+        function openCheckout() {
+            if (cart.length === 0) return;
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('checkout-total-display').innerText = `Total: $${subtotal} USD`;
+            closeCart();
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckout() {
+            cart = [];
+            updateCartUI();
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        // MOBILE MENU NAVIGATION
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('-translate-x-full');
+        }
+
+        // NEWSLETTER SUBMISSION
+        function handleSubscribe(e) {
+            e.preventDefault();
+            alert('¡Gracias por unirte al Círculo Privado de Aura Ethereal! Te hemos enviado una bienvenida exclusiva a tu correo.');
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
